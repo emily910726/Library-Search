@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:async' show Future;
 import 'package:flutter/services.dart' show rootBundle;
@@ -58,33 +59,43 @@ class BookLocation {
   String title;
   String author;
   String publisher;
-  int year;
-  double price;
+  String year; // 4
+  double price; //5 
   String page;
-  int pageNumber;
+  int pageNumber;  //7
   String date;
-  int isbn;
+  String keyword;
+  int barcode; //10
+  int marcCode;
+  String isbn;
   String area;
+  String summary;
+  int unitNumber; //15
   String classificationCode;
-  int typeCode;
-  int quantity;
+  int typeCode; 
+  String lot;   //18
   String location;
 
-  BookLocation(callNumber, title, author, publisher, year, price, page, pageNumber, date, isbn, area, classificationCode, typeCode, quantity, location) : 
+  BookLocation(callNumber, title, author, publisher, year, price, page, pageNumber, date, keyword, barcode, marcCode, isbn, area, summary, unitNumber, classificationCode, typeCode, lot, location) : 
     callNumber = callNumber,
     title = title,
     author = author,
     publisher = publisher,
     year = year,
-    price = price,
+    price = price, //4
     page = page,
     pageNumber = pageNumber,
     date = date,
+    keyword = keyword,
+    barcode = barcode,
+    marcCode = marcCode,
     isbn = isbn,
     area = area,
+    summary = summary,
+    unitNumber = unitNumber,
     classificationCode = classificationCode,
     typeCode = typeCode,
-    quantity = quantity,
+    lot = lot,
     location = location;
     }
 
@@ -101,10 +112,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildResult() {
     return ListView.builder(
-      padding: EdgeInsets.all(16.0),
       itemCount: _result.length,
       itemBuilder: (context, i) {
-        return Text('${_result[i].title}, ${_result[i].author}, ${_result[i].publisher}');
+        // return Text('${_result[i].title}, ${_result[i].author}, ${_result[i].publisher}');
+        return Card(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                  Text(_result[i].title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                  Text(_result[i].author, style: TextStyle(fontSize: 12)),
+                ]
+              )
+            )
+          );
       }
     );
   }
@@ -129,9 +151,14 @@ class _MyHomePageState extends State<MyHomePage> {
       if (snapshot.hasData) {
         var csvString = snapshot.data;
         List<List<dynamic>> rowsAsListOfValues = const CsvToListConverter().convert(csvString);
-        var x = rowsAsListOfValues[0];
+        debugPrint("hiiiiii");
+        // for(int i = 0; i < rowsAsListOfValues.length -1; i ++){
+        //   var x = rowsAsListOfValues[i];
+        //   debugPrint('$i : ${x[4].runtimeType}:${x[4]} ${x[7].runtimeType} ${x[8].runtimeType} ${x[10].runtimeType} ${x[11].runtimeType}');
+        // }
+       
         bookLocations = rowsAsListOfValues.map(
-          (x) => new BookLocation(x[0], x[1], x[2], x[3], x[4], x[5].toDouble(), x[6], x[7], x[8], x[9], x[10], x[11], x[12], x[13], x[14])
+          (x) => new BookLocation(x[0].toString(), x[1].toString(), x[2].toString(), x[3].toString(), x[4].toString(), x[5].toDouble(), x[6].toString(), x[7].toInt(), x[8].toString(), x[9].toString(), x[10].toInt(), x[11].toInt(), x[12].toString(), x[13].toString(), x[14].toString(), x[15].toInt(), x[16].toString(), x[17].toInt(), x[18].toString(), x[19].toString())
         ).toList();
 
         return Scaffold(
@@ -158,21 +185,20 @@ class _MyHomePageState extends State<MyHomePage> {
               // center the children vertically; the main axis here is the vertical
               // axis because Columns are vertical (the cross axis would be
               // horizontal).
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
               TextField(
                 controller: searchText
                 ),
                 Text(
-                  'You have pushed the button this many times:',
+                  '请输入书名进行查询',
                 ),
                 // Text(
                 //   // searchText.text,
                 //   _result,
                 //   style: Theme.of(context).textTheme.headline4,
                 // ),
-                Container(
-                  height: 150.0,
+                new Expanded(
                   child: _buildResult()
                 )
               ],
@@ -181,7 +207,7 @@ class _MyHomePageState extends State<MyHomePage> {
           floatingActionButton: FloatingActionButton(
             onPressed: _incrementCounter,
             tooltip: 'Increment',
-            child: Icon(Icons.add),
+            child: Icon(Icons.search),
           ), // This trailing comma makes auto-formatting nicer for build methods.
         );
       } else {
