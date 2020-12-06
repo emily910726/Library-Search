@@ -54,15 +54,39 @@ class MyHomePage extends StatefulWidget {
 }
 
 class BookLocation {
+  String callNumber;
   String title;
-  String description;
+  String author;
+  String publisher;
+  int year;
+  double price;
+  String page;
+  int pageNumber;
+  String date;
   int isbn;
+  String area;
+  String classificationCode;
+  int typeCode;
+  int quantity;
+  String location;
 
-  BookLocation(title, description, isbn) : 
+  BookLocation(callNumber, title, author, publisher, year, price, page, pageNumber, date, isbn, area, classificationCode, typeCode, quantity, location) : 
+    callNumber = callNumber,
     title = title,
-    description = description,
-    isbn = isbn;
-}
+    author = author,
+    publisher = publisher,
+    year = year,
+    price = price,
+    page = page,
+    pageNumber = pageNumber,
+    date = date,
+    isbn = isbn,
+    area = area,
+    classificationCode = classificationCode,
+    typeCode = typeCode,
+    quantity = quantity,
+    location = location;
+    }
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
@@ -80,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
       padding: EdgeInsets.all(16.0),
       itemCount: _result.length,
       itemBuilder: (context, i) {
-        return Text('${_result[i].title}');
+        return Text('${_result[i].title}, ${_result[i].author}, ${_result[i].publisher}');
       }
     );
   }
@@ -105,8 +129,9 @@ class _MyHomePageState extends State<MyHomePage> {
       if (snapshot.hasData) {
         var csvString = snapshot.data;
         List<List<dynamic>> rowsAsListOfValues = const CsvToListConverter().convert(csvString);
+        var x = rowsAsListOfValues[0];
         bookLocations = rowsAsListOfValues.map(
-          (x) => new BookLocation(x[0], x[1], x[2])
+          (x) => new BookLocation(x[0], x[1], x[2], x[3], x[4], x[5].toDouble(), x[6], x[7], x[8], x[9], x[10], x[11], x[12], x[13], x[14])
         ).toList();
 
         return Scaffold(
